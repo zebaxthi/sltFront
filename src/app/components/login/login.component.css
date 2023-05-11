@@ -1,0 +1,9 @@
+.login-card, .registration-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
