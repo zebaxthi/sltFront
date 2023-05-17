@@ -9,8 +9,11 @@ import { LoansComponent } from './components/loans/loans.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegisterComponent } from './components/register/register.component';
-import { AngularMaterialModule } from './angular-material.module';
 import { FlexLayoutModule } from "@angular/flex-layout";
+
+//prime ng imports
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 
 
 @NgModule({
@@ -26,9 +29,10 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
-    AngularMaterialModule,
     ReactiveFormsModule,
     FlexLayoutModule,
+    InputTextModule,
+    ButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent],

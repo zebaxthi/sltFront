@@ -1,22 +1,10 @@
-<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
-
-  <mat-card class="box">
-    <mat-card-header>
-      <mat-card-title>Log in</mat-card-title>
-    </mat-card-header>
-
-    <form class="example-form">
-      <mat-card-content>
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Username">
-        </mat-form-field>
-
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Password">
-        </mat-form-field>
-      </mat-card-content>
-      <button mat-stroked-button color="accent" class="btn-block">Log in</button>
-    </form>
-  </mat-card>
-
+<div class="flex-container">
+  <form [formGroup]="user" class="card">
+    <h1>Stocktaking Loan</h1>
+    <label htmlFor="Email">Email</label>
+    <input type="text" pInputText formControlName="email"/>
+    <label htmlFor="Password">Password</label>
+    <input type="password" pInputText formControlName="password"/>
+    <p-button label="sign in" styleClass="p-button-rounded p-button-success"></p-button>
+  </form>
 </div>
