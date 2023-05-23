@@ -14,6 +14,9 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 //prime ng imports
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { ArticleService } from './components/inventory/service/article.service';
+import { RatingModule } from 'primeng/rating';
 
 
 @NgModule({
@@ -32,9 +35,11 @@ import { ButtonModule } from 'primeng/button';
     ReactiveFormsModule,
     FlexLayoutModule,
     InputTextModule,
-    ButtonModule
+    ButtonModule,
+    TableModule,
+    RatingModule
   ],
-  providers: [],
+  providers: [ArticleService],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

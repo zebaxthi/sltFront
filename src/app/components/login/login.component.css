@@ -16,8 +16,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column; 
-    max-width: 300px; /* Ajusta según tus necesidades */
+    flex-direction: column;
+    max-width: 300px;
     padding: 20px;
     text-align: center;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
 }
