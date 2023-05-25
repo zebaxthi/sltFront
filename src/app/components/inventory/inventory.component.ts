@@ -11,8 +11,8 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     providers: [MessageService, ConfirmationService, {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => InventoryComponent),  // replace name as appropriate
-      multi: true
-    }]
+      multi: true
+    }]
 })
 export class InventoryComponent implements OnInit{
     articleDialog: boolean = false;

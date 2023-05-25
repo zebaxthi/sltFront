@@ -8,6 +8,10 @@
     height: 90vh;
 }
 
+p-button{
+    padding-top: 1rem;
+}
+
 .card {
     background: var(--surface-card);
     padding: 2rem;

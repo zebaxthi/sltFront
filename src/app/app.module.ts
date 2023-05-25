@@ -8,7 +8,6 @@ import { InventoryComponent } from './components/inventory/inventory.component';
 import { LoansComponent } from './components/loans/loans.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RegisterComponent } from './components/register/register.component';
 import { FlexLayoutModule } from "@angular/flex-layout";
 
 //prime ng imports
@@ -17,7 +16,7 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { ArticleService } from './components/inventory/service/article.service';
 import { RatingModule } from 'primeng/rating';
-
+import { HomeModule } from './components/home/home.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +24,6 @@ import { RatingModule } from 'primeng/rating';
     LoginComponent,
     InventoryComponent,
     LoansComponent,
-    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -37,10 +35,12 @@ import { RatingModule } from 'primeng/rating';
     InputTextModule,
     ButtonModule,
     TableModule,
-    RatingModule
+    RatingModule,
+    HomeModule
   ],
   providers: [ArticleService],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  exports: []
 })
 export class AppModule { }
