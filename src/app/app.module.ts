@@ -9,14 +9,9 @@ import { LoansComponent } from './components/loans/loans.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
-
-//prime ng imports
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { ArticleService } from './components/inventory/service/article.service';
-import { RatingModule } from 'primeng/rating';
 import { HomeModule } from './components/home/home.module';
+import { ArticleService } from './components/inventory/service/article.service';
+import { PrimengModule } from './primeng.module';
 
 @NgModule({
   declarations: [
@@ -32,11 +27,8 @@ import { HomeModule } from './components/home/home.module';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    InputTextModule,
-    ButtonModule,
-    TableModule,
-    RatingModule,
-    HomeModule
+    HomeModule,
+    PrimengModule
   ],
   providers: [ArticleService],
   bootstrap: [AppComponent],

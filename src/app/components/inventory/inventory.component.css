@@ -3,3 +3,9 @@
   margin: 0 auto 2rem auto;
   display: block;
 }
+
+.Manage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
