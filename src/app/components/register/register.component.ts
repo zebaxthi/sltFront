@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TreeNode } from 'primeng/api';
-import { RegisterService } from '../../service/registerservice';
+import { TreeRegister } from 'primeng/api';
+import { RegisterService } from '../../service/register.service';
 
 @Component({
     selector: 'tree-single-register',
