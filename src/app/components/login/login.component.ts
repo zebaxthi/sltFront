@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
   loading: boolean;
 
   user: FormGroup = new FormGroup({
-    email: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"), Validators.required]),
     password: new FormControl('', Validators.required)
   });
 
