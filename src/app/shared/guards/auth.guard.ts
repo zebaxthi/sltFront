@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
           this.redirectToLogin();
           return true;
         } else {
-          this.redirectToHome();
+          this.redirectToUrl();
           return true;
         }
       })
@@ -38,8 +38,8 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  private redirectToHome(): void {
-    if (location.pathname !== '/home') {
+  private redirectToUrl(): void {
+    if (location.pathname === '/login') {
       location.replace('/home');
     }
   }
