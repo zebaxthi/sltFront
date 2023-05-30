@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
   signIn(from: CredentialsUser){
     this.auth.authenticate(from).subscribe(res => {
       this.loading = true;
-      this.auth.saveToken(res['data']['token'])
+      this.auth.saveToken(res['data']['token']);
       this.router.navigate(['home']);
     }, error => {
       console.log(error);

@@ -3,14 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { InventoryComponent } from '../inventory/inventory.component';
 import { LoansComponent } from '../loans/loans.component';
 import { HomeComponent } from './home.component';
+import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: '', 
     component: HomeComponent,
       children: [
-        { path: 'inventory', component: InventoryComponent },
-        { path: 'loans', component: LoansComponent },
+        { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
+        { path: 'loans', component: LoansComponent, canActivate: [AuthGuard] },
     ]
   },
   {path: '**', redirectTo: 'home', pathMatch: 'full',}
