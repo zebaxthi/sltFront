@@ -6,6 +6,6 @@
     <input type="text" pInputText formControlName="email"/>
     <label htmlFor="Password">Password</label>
     <input type="password" pInputText formControlName="password"/>
-    <p-button label="sign in" styleClass="p-button-rounded p-button-success"></p-button>
+    <p-button label="Sign In" [loading]="loading" (click)="signIn(user.value)"></p-button>
   </form>
 </div>

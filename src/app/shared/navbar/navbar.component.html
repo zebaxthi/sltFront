@@ -3,5 +3,8 @@
         <ng-template pTemplate="start">
             <img src="../../../assets/loanIcon.svg" height="40" class="mr-2" />
         </ng-template>
+        <ng-template pTemplate="end">
+            <p-button label="Log out" styleClass="p-button-raised p-button-danger" (click)="logOut()"></p-button>
+        </ng-template>
     </p-menubar>
 </div>

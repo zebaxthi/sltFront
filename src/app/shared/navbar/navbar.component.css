@@ -1,0 +1,6 @@
+.end-button {
+    position: absolute;
+    right: 16px; /* Ajusta el valor según sea necesario */
+    top: 50%;
+    transform: translateY(-50%);
+  }

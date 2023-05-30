@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from './service/auth.service';
+import { CredentialsUser } from 'src/app/domain/credentialsUser';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -7,15 +10,30 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  user: FormGroup = new FormGroup({});
 
-  constructor() { }
+  loading: boolean;
+
+  user: FormGroup = new FormGroup({
+    email: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required)
+  });
+
+  constructor(public auth: AuthService, private router: Router) { }
 
   ngOnInit() {
-    this.user = new FormGroup({
-        email: new FormControl<string | null>(null),
-        password: new FormControl<string | null>(null)
-    });
-}
+  }
+
+  signIn(from: CredentialsUser){
+    this.auth.authenticate(from).subscribe(res => {
+      this.loading = true;
+      this.auth.saveToken(res['data']['token'])
+      this.router.navigate(['home']);
+    }, error => {
+      console.log(error);
+      this.loading = false;
+    }, () => {
+      this.loading = false;
+    } );
+  }
 
 }

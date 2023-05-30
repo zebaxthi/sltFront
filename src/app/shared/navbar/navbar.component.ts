@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
+import { AuthService } from '../../components/login/service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -8,10 +10,19 @@ import { MenuItem } from 'primeng/api';
 })
 export class NavbarComponent {
 
-  items: MenuItem[];
+    items: MenuItem[];
+
+    constructor(private auth: AuthService, private router: Router) {
+
+    }
 
     ngOnInit() {
         this.items = [
+            {
+                label: 'Home',
+                icon: 'pi pi-fw pi-home',
+                command:()=>{location.replace('/home');}
+            },
             {
                 label: 'Inventory',
                 icon: 'pi pi-fw pi-file',
@@ -23,6 +34,11 @@ export class NavbarComponent {
                 command:()=>{location.replace('/loans');}
             },
         ];
+    }
+
+    logOut(){
+        this.auth.removeToken();
+        this.router.navigate(['login']);
     }
 
 }
