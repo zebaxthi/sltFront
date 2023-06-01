@@ -15,7 +15,7 @@
       [value]="articles"
       [rows]="10"
       [paginator]="true"
-      [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+      [globalFilterFields]="['name', 'ref', 'quantity', 'status']"
       [tableStyle]="{ 'min-width': '75rem' }"
       [(selection)]="selectedArticles"
       [rowHover]="true"
@@ -28,7 +28,7 @@
               <h5 class="m-0">Manage Articles</h5>
               <span class="p-input-icon-left">
                   <i class="pi pi-search"></i>
-                  <input pInputText type="text" (input)="dt.filterGlobal($event.target, 'contains')" placeholder="Search..." />
+                  <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
               </span>
           </div>
       </ng-template>
@@ -38,9 +38,9 @@
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
               <th pSortableColumn="name" style="min-width:15rem">Name <p-sortIcon field="name"></p-sortIcon></th>
-              <th pSortableColumn="category" style="min-width:10rem">Category <p-sortIcon field="category"></p-sortIcon></th>
-              <th pSortableColumn="rating">Reviews <p-sortIcon field="rating"></p-sortIcon></th>
-              <th pSortableColumn="inventoryStatus" style="min-width:10rem">Status <p-sortIcon field="inventoryStatus"></p-sortIcon></th>
+              <th pSortableColumn="ref" style="min-width:10rem">Ref <p-sortIcon field="ref"></p-sortIcon></th>
+              <th pSortableColumn="quantity" style="min-width:10rem">Quantity <p-sortIcon field="quantity"></p-sortIcon></th>
+              <th pSortableColumn="status" style="min-width:10rem">Status <p-sortIcon field="status"></p-sortIcon></th>
               <th>
 
               </th>
@@ -52,10 +52,10 @@
                   <p-tableCheckbox [value]="article"></p-tableCheckbox>
               </td>
               <td>{{ article.name }}</td>
-              <td>{{ article.category }}</td>
-              <td><p-rating [ngModel]="article.rating" [readonly]="true" [cancel]="false"></p-rating></td>
+              <td>{{ article.ref }}</td>
+              <td>{{ article.quantity }}</td>
               <td>
-                  <p-tag [value]="article.inventoryStatus" [severity]="getSeverity(article.inventoryStatus)"></p-tag>
+                  <p-tag [value]="article.status.toUpperCase()" [severity]="getSeverity(article.status.toUpperCase())"></p-tag>
               </td>
               <td>
                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editArticle(article)"></button>
@@ -76,15 +76,16 @@
           <small class="p-error" *ngIf="submitted && !article.name">Name is required.</small>
       </div>
       <div class="field">
-          <label for="description">Description</label>
-          <textarea id="description" pInputTextarea [(ngModel)]="article.description" required rows="3" cols="20"></textarea>
-      </div>
+        <label for="ref">Ref</label>
+        <input type="text" pInputText id="ref" [(ngModel)]="article.ref" required autofocus />
+        <small class="p-error" *ngIf="submitted && !article.name">ref is required.</small>
+    </div>
 
       <div class="field">
-          <label for="inventoryStatus">Inventory Status</label>
-          <p-dropdown [(ngModel)]="article.inventoryStatus" inputId="inventoryStatus" [options]="statuses">
+          <label for="status">Status</label>
+          <p-dropdown [(ngModel)]="article.status" inputId="status" [options]="statuses">
               <ng-template pTemplate="selectedItem">
-                  <p-tag [value]="article.inventoryStatus.toUpperCase()" [severity]="getSeverity(article.inventoryStatus.toUpperCase())"></p-tag>
+                  <p-tag [value]="article.status.toUpperCase()" [severity]="getSeverity(article.status.toUpperCase())"></p-tag>
               </ng-template>
               <ng-template let-option pTemplate="item">
                   <p-tag [value]="option.label" [severity]="getSeverity(option.label)"></p-tag>
@@ -92,33 +93,7 @@
           </p-dropdown>
       </div>
 
-      <div class="field">
-          <label class="mb-3">Category</label>
-          <div class="formgrid grid">
-              <div class="field-radiobutton col-6">
-                  <p-radioButton id="category1" name="category" value="Accessories" [(ngModel)]="article.category"></p-radioButton>
-                  <label for="category1">Accessories</label>
-              </div>
-              <div class="field-radiobutton col-6">
-                  <p-radioButton id="category2" name="category" value="Clothing" [(ngModel)]="article.category"></p-radioButton>
-                  <label for="category2">Clothing</label>
-              </div>
-              <div class="field-radiobutton col-6">
-                  <p-radioButton id="category3" name="category" value="Electronics" [(ngModel)]="article.category"></p-radioButton>
-                  <label for="category3">Electronics</label>
-              </div>
-              <div class="field-radiobutton col-6">
-                  <p-radioButton id="category4" name="category" value="Fitness" [(ngModel)]="article.category"></p-radioButton>
-                  <label for="category4">Fitness</label>
-              </div>
-          </div>
-      </div>
-
       <div class="formgrid grid">
-          <div class="field col">
-              <label for="price">Price</label>
-              <p-inputNumber id="price" [(ngModel)]="article.price" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
-          </div>
           <div class="field col">
               <label for="quantity">Quantity</label>
               <p-inputNumber id="quantity" [(ngModel)]="article.quantity"></p-inputNumber>

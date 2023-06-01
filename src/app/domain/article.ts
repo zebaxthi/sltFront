@@ -1,13 +1,8 @@
 
 export interface Article {
   id?: string;
-  code?: string;
+  ref?: string;
   name?: string;
-  description?: string;
-  //price?: number;
   quantity?: number;
-  inventoryStatus?: string;
-  //category?: string;
-  //image?: string;
-  //rating?: number;
+  status?: string;
 }

@@ -10,7 +10,7 @@ const routes: Routes = [
     path: '', 
     component: HomeComponent,
       children: [
-        { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
+        { path: 'inventory', loadChildren: () => import('../inventory/inventory.module').then(l => l.InventoryModule), canActivate: [AuthGuard] },
         { path: 'loans', component: LoansComponent, canActivate: [AuthGuard] },
     ]
   },
