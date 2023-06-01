@@ -12,12 +12,13 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { HomeModule } from './components/home/home.module';
 import { ArticleService } from './components/inventory/service/article.service';
 import { PrimengModule } from './primeng.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './helpers/jwt.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    InventoryComponent,
     LoansComponent,
   ],
   imports: [
@@ -28,9 +29,12 @@ import { PrimengModule } from './primeng.module';
     ReactiveFormsModule,
     FlexLayoutModule,
     HomeModule,
-    PrimengModule
+    PrimengModule,
   ],
-  providers: [ArticleService],
+  providers: [
+    ArticleService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: []
