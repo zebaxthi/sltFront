@@ -15,7 +15,7 @@
       [value]="articles"
       [rows]="10"
       [paginator]="true"
-      [globalFilterFields]="['name', 'ref', 'quantity', 'status']"
+      [globalFilterFields]="['user', 'monitor', 'article', 'qtyArticle', 'dateStart', 'dateEnd', 'isReturn']"
       [tableStyle]="{ 'min-width': '75rem' }"
       [(selection)]="selectedArticles"
       [rowHover]="true"
@@ -37,10 +37,13 @@
               <th style="width: 4rem">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
-              <th pSortableColumn="name" style="min-width:15rem">Name <p-sortIcon field="name"></p-sortIcon></th>
-              <th pSortableColumn="ref" style="min-width:10rem">Ref <p-sortIcon field="ref"></p-sortIcon></th>
-              <th pSortableColumn="quantity" style="min-width:10rem">Quantity <p-sortIcon field="quantity"></p-sortIcon></th>
-              <th pSortableColumn="status" style="min-width:10rem">Status <p-sortIcon field="status"></p-sortIcon></th>
+              <th pSortableColumn="user" style="min-width:15rem">User <p-sortIcon field="user"></p-sortIcon></th>
+              <th pSortableColumn="monitor" style="min-width:10rem">Monitor <p-sortIcon field="monitor"></p-sortIcon></th>
+              <th pSortableColumn="article" style="min-width:10rem">Article <p-sortIcon field="article"></p-sortIcon></th>
+              <th pSortableColumn="qtyArticle" style="min-width:10rem">QtyArticle <p-sortIcon field="qtyArticle"></p-sortIcon></th>
+              <th pSortableColumn="dateStart" style="min-width:10rem">DateStart <p-sortIcon field="dateStart"></p-sortIcon></th>
+              <th pSortableColumn="dateEnd" style="min-width:10rem">DateEnd <p-sortIcon field="dateEnd"></p-sortIcon></th>
+              <th pSortableColumn="isReturn" style="min-width:10rem">IsReturn <p-sortIcon field="isReturn"></p-sortIcon></th>
               <th>
 
               </th>

@@ -105,7 +105,7 @@ export class LoansComponent implements OnInit{
 
         if (this.article.name.trim()) {
             if (this.article.id) {
-                let properties = ['name', 'ref', 'quantity', 'status'];
+                let properties = ['user', 'monitor', 'article', 'qtyArticle', 'dateStart', 'dateEnd', 'isReturn'];
                 properties.map(x => {
                     if(this.oldArticle[x] !== this.article[x]){
                         let patch: Patch = {
