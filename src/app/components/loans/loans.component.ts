@@ -1,10 +1,11 @@
-
 import { Component, OnInit, forwardRef } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Article } from '../../domain/article';
-import { ArticleService } from '../inventory/service/article.service';
+import { Loan } from '../../domain/loan';
+import { LoanService } from './service/loan.service';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Patch } from 'src/app/domain/patch';
+import { User } from 'src/app/domain/user';
+import { Article } from 'src/app/domain/article';
 
 @Component({
   selector: 'app-loans',
@@ -18,131 +19,147 @@ import { Patch } from 'src/app/domain/patch';
 })
 export class LoansComponent implements OnInit{
 
-    articleDialog: boolean = false;
+    loanDialog: boolean = false;
 
-    articles: Article[];
+    loans: Loan[];
 
-    article: Article;
+    loan: Loan;
 
-    oldArticle: Article;
+    oldLoan: Loan;
 
-    selectedArticles: Article[];
+    selectedLoans: Loan[];
 
     submitted: boolean;
 
-    statuses: any[];
+    returnedValues: any[];
 
-    constructor(private articleService: ArticleService, private messageService: MessageService, private confirmationService: ConfirmationService) {}
+    users: User[];
+
+    monitors: User[];
+
+    articles: Article[];
+
+    constructor(private loanService: LoanService, private messageService: MessageService, private confirmationService: ConfirmationService) {}
 
     ngOnInit() {
-        this.articleService.getArticles().subscribe(res => {
-            this.articles = res['data'];
+        this.loanService.getLoans().subscribe(res => {
+            this.loans = res['data'];
         }, error => {
-            this.messageService.add({ severity: 'error', summary: 'Unexpected error', detail: 'There was an unexpected error loading articles', life: 3000 });
+            this.messageService.add({ severity: 'error', summary: 'Unexpected error', detail: 'There was an unexpected error loading loans', life: 3000 });
         });
 
-        this.statuses = [
-            { label: 'ACTIVE', value: 'ACTIVE' },
-            { label: 'INACTIVE', value: 'INACTIVE' },
+        this.returnedValues = [
+            { label: 'TRUE', value: true },
+            { label: 'FALSE', value: false },
         ];
     }
 
     openNew() {
-        this.article = {};
-        this.submitted = false;
-        this.articleDialog = true;
+        this.loan = { 
+            startDate: new Date(),
+            endDate: new Date(),
+            returned: false
+        };        this.submitted = false;
+        this.loanDialog = true;
     }
 
-    deleteSelectedArticles() {
+    deleteSelectedLoans() {
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete the selected articles?',
+            message: 'Are you sure you want to delete the selected loans?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.selectedArticles.forEach(element => {
-                    this.articleService.deleteArticle(element.id).subscribe(res => {
-                        this.articles = this.articles.filter((val) => val.id !== element.id);
-                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Article Deleted', life: 3000 });
+                this.selectedLoans.forEach(element => {
+                    this.loanService.deleteLoan(element.id).subscribe(res => {
+                        this.loans = this.loans.filter((val) => val.id !== element.id);
+                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Loan Deleted', life: 3000 });
                     }, error => {
-                        this.messageService.add({ severity: 'error', summary: 'Error Deleting Article', detail: 'There was an error trying to delete the article', life: 3000 });
+                        this.messageService.add({ severity: 'error', summary: 'Error Deleting Loan', detail: 'There was an error trying to delete the loan', life: 3000 });
                     });
                 });
-                this.selectedArticles = null;
+                this.selectedLoans = null;
             }
         });
     }
 
-    editArticle(article: Article) {
-        this.article = { ...article };
-        this.oldArticle = { ...article };
-        this.articleDialog = true;
+    editLoan(loan: Loan) {
+        this.loan = { ...loan };
+        this.oldLoan = { ...loan };
+        this.loanDialog = true;
     }
 
-    deleteArticle(article: Article) {
+    deleteLoan(loan: Loan) {
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete ' + article.name + '?',
+            message: 'Are you sure you want to delete ' + loan.article.name + '?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.articleService.deleteArticle(article.id).subscribe(res => {
-                    this.articles = this.articles.filter((val) => val.id !== article.id);
-                    this.article = {};
-                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Article Deleted', life: 3000 });
+                this.loanService.deleteLoan(loan.id).subscribe(res => {
+                    this.loans = this.loans.filter((val) => val.id !== loan.id);
+                    this.loan = { 
+                        startDate: new Date(),
+                        endDate: new Date(),
+                        returned: false
+                    };
+                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Loan Deleted', life: 3000 });
                 }, error => {
-                    this.messageService.add({ severity: 'error', summary: 'Error Deleting Article', detail: 'There was an error trying to delete the article', life: 3000 });
+                    this.messageService.add({ severity: 'error', summary: 'Error Deleting Loan', detail: 'There was an error trying to delete the loan', life: 3000 });
                 });
             }
         });
     }
 
     hideDialog() {
-        this.articleDialog = false;
+        this.loanDialog = false;
         this.submitted = false;
     }
 
-    saveArticle() {
+    saveLoan() {
         this.submitted = true;
 
-        if (this.article.name.trim()) {
-            if (this.article.id) {
-                let properties = ['user', 'monitor', 'article', 'qtyArticle', 'dateStart', 'dateEnd', 'isReturn'];
+        if (this.loan.article.name.trim()) {
+            if (this.loan.id) {
+                let properties = ['user', 'monitor', 'article', 'quantityArticle', 'startDate', 'endDate', 'returned'];
                 properties.map(x => {
-                    if(this.oldArticle[x] !== this.article[x]){
+                    if(this.oldLoan[x] !== this.loan[x]){
                         let patch: Patch = {
                             op: 'update',
                             key: x,
-                            value: this.article[x]
+                            value: this.loan[x]
                         }
-                        this.articleService.patchArticle(this.article.id, patch).subscribe(res => {
+                        this.loanService.patchLoan(this.loan.id, patch).subscribe(res => {
                             debugger;
-                            this.messageService.add({ severity: 'success', summary: 'Article Updated', detail: `updated ${x} property successfully`, life: 3000 });
+                            this.messageService.add({ severity: 'success', summary: 'Loan Updated', detail: `updated ${x} property successfully`, life: 3000 });
                         }, error => {
-                            this.messageService.add({ severity: 'error', summary: 'Error Updating Article', detail: `Error updating ${x} property the article`, life: 3000 });
+                            this.messageService.add({ severity: 'error', summary: 'Error Updating Loan', detail: `Error updating ${x} property the loan`, life: 3000 });
                         });
-                        this.articles[this.findIndexById(this.article.id)] = this.article;
+                        this.loans[this.findIndexById(this.loan.id)] = this.loan;
                     }
                 });
             } else {
-                this.articleService.postArticle(this.article).subscribe(res => {
+                this.loanService.postLoan(this.loan).subscribe(res => {
                     if(res['status'] === 'CREATED'){
-                        this.articles.push(res['data']);
-                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Article Created', life: 3000 });
+                        this.loans.push(res['data']);
+                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Loan Created', life: 3000 });
                     }
                 }, error => {
-                    this.messageService.add({ severity: 'error', summary: 'Error Creating Article', detail: 'Error creating the article', life: 3000 });
+                    this.messageService.add({ severity: 'error', summary: 'Error Creating Loan', detail: 'Error creating the loan', life: 3000 });
                 });
             }
 
-            this.articles = [...this.articles];
-            this.articleDialog = false;
-            this.article = {};
-        }
+            this.loans = [...this.loans];
+            this.loanDialog = false;
+            this.loan = { 
+                startDate: new Date(),
+                endDate: new Date(),
+                returned: false
+            };        }
     }
 
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.articles.length; i++) {
-            if (this.articles[i].id === id) {
+        for (let i = 0; i < this.loans.length; i++) {
+            if (this.loans[i].id === id) {
                 index = i;
                 break;
             }
@@ -151,11 +168,11 @@ export class LoansComponent implements OnInit{
         return index;
     }
 
-    getSeverity(status: string) {
-        switch (status) {
-            case 'ACTIVE':
+    getSeverity(returnedValue: boolean) {
+        switch (returnedValue) {
+            case true:
                 return 'success';
-            case 'INACTIVE':
+            case false:
                 return 'danger';
             default:
               return "error";

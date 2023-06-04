@@ -22,4 +22,4 @@ const routes: Routes = [
   exports: [LoansComponent,
   RouterModule]
 })
-export class InventoryModule { }
+export class LoansModule { }

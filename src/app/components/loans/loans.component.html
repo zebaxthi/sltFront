@@ -6,18 +6,18 @@
         </ng-template>
 
         <ng-template pTemplate="right">
-          <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedArticles()" [disabled]="!selectedArticles || !selectedArticles.length"></button>
+          <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedLoans()" [disabled]="!selectedLoans || !selectedLoans.length"></button>
       </ng-template>
   </p-toolbar>
 
   <p-table
       #dt
-      [value]="articles"
+      [value]="loans"
       [rows]="10"
       [paginator]="true"
-      [globalFilterFields]="['user', 'monitor', 'article', 'qtyArticle', 'dateStart', 'dateEnd', 'isReturn']"
+      [globalFilterFields]="['user', 'monitor', 'article', 'quantityArticle', 'startDate', 'endDate', 'returned']"
       [tableStyle]="{ 'min-width': '75rem' }"
-      [(selection)]="selectedArticles"
+      [(selection)]="selectedLoans"
       [rowHover]="true"
       dataKey="id"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -25,7 +25,7 @@
   >
       <ng-template pTemplate="caption">
           <div class="Manage">
-              <h5 class="m-0">Manage Articles</h5>
+              <h5 class="m-0">Manage Loans</h5>
               <span class="p-input-icon-left">
                   <i class="pi pi-search"></i>
                   <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
@@ -40,73 +40,106 @@
               <th pSortableColumn="user" style="min-width:15rem">User <p-sortIcon field="user"></p-sortIcon></th>
               <th pSortableColumn="monitor" style="min-width:10rem">Monitor <p-sortIcon field="monitor"></p-sortIcon></th>
               <th pSortableColumn="article" style="min-width:10rem">Article <p-sortIcon field="article"></p-sortIcon></th>
-              <th pSortableColumn="qtyArticle" style="min-width:10rem">QtyArticle <p-sortIcon field="qtyArticle"></p-sortIcon></th>
-              <th pSortableColumn="dateStart" style="min-width:10rem">DateStart <p-sortIcon field="dateStart"></p-sortIcon></th>
-              <th pSortableColumn="dateEnd" style="min-width:10rem">DateEnd <p-sortIcon field="dateEnd"></p-sortIcon></th>
-              <th pSortableColumn="isReturn" style="min-width:10rem">IsReturn <p-sortIcon field="isReturn"></p-sortIcon></th>
+              <th pSortableColumn="quantityArticle" style="min-width:10rem">Quantity Article <p-sortIcon field="quantityArticle"></p-sortIcon></th>
+              <th pSortableColumn="startDate" style="min-width:10rem">Start Date <p-sortIcon field="startDate"></p-sortIcon></th>
+              <th pSortableColumn="endDate" style="min-width:10rem">End Date <p-sortIcon field="endDate"></p-sortIcon></th>
+              <th pSortableColumn="returned" style="min-width:10rem">Returned <p-sortIcon field="returned"></p-sortIcon></th>
               <th>
 
               </th>
           </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-article>
+      <ng-template pTemplate="body" let-loan>
           <tr>
               <td>
-                  <p-tableCheckbox [value]="article"></p-tableCheckbox>
+                  <p-tableCheckbox [value]="loan"></p-tableCheckbox>
               </td>
-              <td>{{ article.name }}</td>
-              <td>{{ article.ref }}</td>
-              <td>{{ article.quantity }}</td>
+              <td>{{ loan.user.name }}</td>
+              <td>{{ loan.monitor.name  }}</td>
+              <td>{{ loan.article.name  }}</td>
+              <td>{{ loan.quantityArticle }}</td>
+              <td>{{ loan.startDate  }}</td>
+              <td>{{ loan.endDate  }}</td>
+              <td>{{ loan.returned  }}</td>
               <td>
-                  <p-tag [value]="article.status.toUpperCase()" [severity]="getSeverity(article.status.toUpperCase())"></p-tag>
-              </td>
-              <td>
-                   <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editArticle(article)"></button>
-                   <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteArticle(article)"></button>
+                   <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editArticle(loan)"></button>
+                   <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteArticle(loan)"></button>
               </td>
           </tr>
       </ng-template>
       <ng-template pTemplate="summary">
-          <div class="flex align-items-center justify-content-between">In total there are {{ articles ? articles.length : 0 }} articles.</div>
+          <div class="flex align-items-center justify-content-between">In total there are {{ loans ? loans.length : 0 }} loans.</div>
       </ng-template>
   </p-table>
 </div>
-<p-dialog [(visible)]="articleDialog" [style]="{ width: '450px' }" header="Article Details" [modal]="true" styleClass="p-fluid">
+<p-dialog [(visible)]="loanDialog" [style]="{ width: '450px' }" header="Loan Details" [modal]="true" styleClass="p-fluid">
   <ng-template pTemplate="content">
-      <div class="field">
-          <label for="name">Name</label>
-          <input type="text" pInputText id="name" [(ngModel)]="article.name" required autofocus />
-          <small class="p-error" *ngIf="submitted && !article.name">Name is required.</small>
-      </div>
-      <div class="field">
-        <label for="ref">Ref</label>
-        <input type="text" pInputText id="ref" [(ngModel)]="article.ref" required autofocus />
-        <small class="p-error" *ngIf="submitted && !article.name">ref is required.</small>
+    <div class="field">
+        <label for="status">User</label>
+        <p-dropdown [(ngModel)]="loan.user" inputId="user" [options]="users">
+            <ng-template pTemplate="selectedItem">
+                <p-tag [value]="loan.user.name.toUpperCase()"></p-tag>
+            </ng-template>
+            <ng-template let-option pTemplate="item">
+                <p-tag [value]="option.label"></p-tag>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    <div class="field">
+        <label for="status">Monitor</label>
+        <p-dropdown [(ngModel)]="loan.monitor" inputId="monitor" [options]="monitors">
+            <ng-template pTemplate="selectedItem">
+                <p-tag [value]="loan.monitor.name.toUpperCase()"></p-tag>
+            </ng-template>
+            <ng-template let-option pTemplate="item">
+                <p-tag [value]="option.label"></p-tag>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    <div class="field">
+        <label for="status">Article</label>
+        <p-dropdown [(ngModel)]="loan.article" inputId="article" [options]="articles">
+            <ng-template pTemplate="selectedItem">
+                <p-tag [value]="loan.article.name.toUpperCase()"></p-tag>
+            </ng-template>
+            <ng-template let-option pTemplate="item">
+                <p-tag [value]="option.label"></p-tag>
+            </ng-template>
+        </p-dropdown>
+    </div>
+    <div class="formgrid grid">
+        <div class="field col">
+            <label for="quantityArticle">Quantity Article</label>
+            <p-inputNumber id="quantityArticle" [(ngModel)]="loan.quantityArticle"></p-inputNumber>
+        </div>
+    </div>
+    <div class="field">
+        <label for="startDate">Start Date</label>
+        <p-calendar appendTo="body" [(ngModel)]="loan.startDate" [showIcon]="true" dateFormat="dd/mm/yy" required></p-calendar>
+        <small class="p-error" *ngIf="submitted && !loan.startDate">Start Date is required.</small>
+    </div>
+    <div class="field">
+        <label for="endDate">End Date</label>
+        <p-calendar appendTo="body" [(ngModel)]="loan.endDate" [showIcon]="true" dateFormat="dd/mm/yy" required></p-calendar>
+        <small class="p-error" *ngIf="submitted && !loan.endDate">End Date is required.</small>
     </div>
 
       <div class="field">
-          <label for="status">Status</label>
-          <p-dropdown [(ngModel)]="article.status" inputId="status" [options]="statuses">
+          <label for="status">Returned</label>
+          <p-dropdown [(ngModel)]="loan.returned" inputId="returned" [options]="returnedValues">
               <ng-template pTemplate="selectedItem">
-                  <p-tag [value]="article.status.toUpperCase()" [severity]="getSeverity(article.status.toUpperCase())"></p-tag>
+                  <p-tag [value]="loan.returned" [severity]="getSeverity(loan.returned)"></p-tag>
               </ng-template>
               <ng-template let-option pTemplate="item">
                   <p-tag [value]="option.label" [severity]="getSeverity(option.label)"></p-tag>
               </ng-template>
           </p-dropdown>
       </div>
-
-      <div class="formgrid grid">
-          <div class="field col">
-              <label for="quantity">Quantity</label>
-              <p-inputNumber id="quantity" [(ngModel)]="article.quantity"></p-inputNumber>
-          </div>
-      </div>
   </ng-template>
 
   <ng-template pTemplate="footer">
       <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveArticle()"></button>
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveLoan()"></button>
   </ng-template>
 </p-dialog>
 
