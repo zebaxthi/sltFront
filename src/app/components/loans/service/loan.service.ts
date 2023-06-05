@@ -42,4 +42,14 @@ export class LoanService {
         return this.http.delete(url, {params: {id: id}});
     }
 
+    getPersons(){
+        const url = `${this.urlMicroServiceSTL}/persons`;
+        return this.http.get(url);
+    }
+
+    getArticles() {
+        const url = `${this.urlMicroServiceSTL}/articles`;
+        return this.http.get(url);
+    }
+
 };

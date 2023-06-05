@@ -37,7 +37,7 @@
               <th style="width: 4rem">
                   <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
-              <th pSortableColumn="user" style="min-width:15rem">User <p-sortIcon field="user"></p-sortIcon></th>
+              <th pSortableColumn="person" style="min-width:15rem">Person <p-sortIcon field="person"></p-sortIcon></th>
               <th pSortableColumn="monitor" style="min-width:10rem">Monitor <p-sortIcon field="monitor"></p-sortIcon></th>
               <th pSortableColumn="article" style="min-width:10rem">Article <p-sortIcon field="article"></p-sortIcon></th>
               <th pSortableColumn="quantityArticle" style="min-width:10rem">Quantity Article <p-sortIcon field="quantityArticle"></p-sortIcon></th>
@@ -54,16 +54,18 @@
               <td>
                   <p-tableCheckbox [value]="loan"></p-tableCheckbox>
               </td>
-              <td>{{ loan.user.name }}</td>
-              <td>{{ loan.monitor.name  }}</td>
-              <td>{{ loan.article.name  }}</td>
+              <td class="text" #targetPerson (click)="opUser.show($event, targetPerson); opMonitor.hide(); opArticle.hide(); setDataViewOverlayPanel(loan.person, op)">{{ loan.person.name }} {{loan.person.lastname}}</td>
+              <td class="text" #targetMonitor (click)="opMonitor.show($event, targetMonitor); opUser.hide(); opArticle.hide(); setDataViewOverlayPanel(loan.monitor, op)">{{ loan.monitor.name  }} {{loan.monitor.lastname}}</td>
+              <td class="text" #targetArticle (click)="opArticle.show($event, targetArticle); opUser.hide(); opMonitor.hide(); setDataViewOverlayPanel(loan.article, op)">{{ loan.article.name  }}</td>
               <td>{{ loan.quantityArticle }}</td>
-              <td>{{ loan.startDate  }}</td>
-              <td>{{ loan.endDate  }}</td>
-              <td>{{ loan.returned  }}</td>
+              <td>{{ loan.startDate | date: 'dd/MM/yyyy'  }}</td>
+              <td>{{ loan.endDate | date: 'dd/MM/yyyy' }}</td>
               <td>
-                   <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editArticle(loan)"></button>
-                   <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteArticle(loan)"></button>
+                <p-tag [value]="loan.returned" [severity]="getSeverity(loan.returned)"></p-tag>
+            </td>
+              <td>
+                   <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editLoan(loan)"></button>
+                   <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteLoan(loan)"></button>
               </td>
           </tr>
       </ng-template>
@@ -75,35 +77,35 @@
 <p-dialog [(visible)]="loanDialog" [style]="{ width: '450px' }" header="Loan Details" [modal]="true" styleClass="p-fluid">
   <ng-template pTemplate="content">
     <div class="field">
-        <label for="status">User</label>
-        <p-dropdown [(ngModel)]="loan.user" inputId="user" [options]="users">
+        <label for="user">User</label>
+        <p-dropdown appendTo="body" [(ngModel)]="loan.person" inputId="user" [options]="users">
             <ng-template pTemplate="selectedItem">
-                <p-tag [value]="loan.user.name.toUpperCase()"></p-tag>
+                <p-tag [value]="loan.person.name + ' ' + loan.person.lastname"></p-tag>
             </ng-template>
             <ng-template let-option pTemplate="item">
-                <p-tag [value]="option.label"></p-tag>
+                <p-tag [value]="option.name + ' ' + option.lastname"></p-tag>
             </ng-template>
         </p-dropdown>
     </div>
     <div class="field">
-        <label for="status">Monitor</label>
-        <p-dropdown [(ngModel)]="loan.monitor" inputId="monitor" [options]="monitors">
+        <label for="monitor">Monitor</label>
+        <p-dropdown appendTo="body" [(ngModel)]="loan.monitor" inputId="monitor" [options]="monitors">
             <ng-template pTemplate="selectedItem">
-                <p-tag [value]="loan.monitor.name.toUpperCase()"></p-tag>
+                <p-tag [value]="loan.monitor.name + ' ' + loan.monitor.lastname"></p-tag>
             </ng-template>
             <ng-template let-option pTemplate="item">
-                <p-tag [value]="option.label"></p-tag>
+                <p-tag [value]="option.name + ' ' + option.lastname"></p-tag>
             </ng-template>
         </p-dropdown>
     </div>
     <div class="field">
-        <label for="status">Article</label>
-        <p-dropdown [(ngModel)]="loan.article" inputId="article" [options]="articles">
+        <label for="article">Article</label>
+        <p-dropdown appendTo="body" [(ngModel)]="loan.article" inputId="article" [options]="articles">
             <ng-template pTemplate="selectedItem">
-                <p-tag [value]="loan.article.name.toUpperCase()"></p-tag>
+                <p-tag [value]="loan.article.name"></p-tag>
             </ng-template>
             <ng-template let-option pTemplate="item">
-                <p-tag [value]="option.label"></p-tag>
+                <p-tag [value]="option.name"></p-tag>
             </ng-template>
         </p-dropdown>
     </div>
@@ -125,13 +127,13 @@
     </div>
 
       <div class="field">
-          <label for="status">Returned</label>
-          <p-dropdown [(ngModel)]="loan.returned" inputId="returned" [options]="returnedValues">
+          <label for="returned">Returned</label>
+          <p-dropdown appendTo="body" [(ngModel)]="loan.returned" inputId="returned" [options]="returnedValues">
               <ng-template pTemplate="selectedItem">
                   <p-tag [value]="loan.returned" [severity]="getSeverity(loan.returned)"></p-tag>
               </ng-template>
               <ng-template let-option pTemplate="item">
-                  <p-tag [value]="option.label" [severity]="getSeverity(option.label)"></p-tag>
+                  <p-tag [value]="option.label" [severity]="getSeverity(option.value)"></p-tag>
               </ng-template>
           </p-dropdown>
       </div>
@@ -144,3 +146,19 @@
 </p-dialog>
 
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<p-overlayPanel appendTo="body" #opUser>
+    <ng-template pTemplate="content">
+        <app-table [DataViewOverlayPanel]="DataViewOverlayPanel" [colsDynamic]="colsDynamic"></app-table>
+      </ng-template>
+</p-overlayPanel>
+<p-overlayPanel appendTo="body" #opMonitor>
+    <ng-template pTemplate="content">
+        <app-table [DataViewOverlayPanel]="DataViewOverlayPanel" [colsDynamic]="colsDynamic"></app-table>
+      </ng-template>
+</p-overlayPanel>
+<p-overlayPanel appendTo="body" #opArticle>
+    <ng-template pTemplate="content">
+        <app-table [DataViewOverlayPanel]="DataViewOverlayPanel" [colsDynamic]="colsDynamic"></app-table>
+      </ng-template>
+</p-overlayPanel>

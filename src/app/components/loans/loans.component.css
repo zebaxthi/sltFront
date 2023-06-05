@@ -12,4 +12,5 @@
   
   .text:hover{
     color: slateblue;
+    cursor: pointer;
   }

@@ -6,8 +6,8 @@ export interface Loan {
     monitor?: User;
     article?: Article;
     quantityArticle?: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     returned: boolean;
   }
   

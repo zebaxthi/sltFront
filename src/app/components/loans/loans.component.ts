@@ -6,6 +6,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Patch } from 'src/app/domain/patch';
 import { User } from 'src/app/domain/user';
 import { Article } from 'src/app/domain/article';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-loans',
@@ -18,6 +19,10 @@ import { Article } from 'src/app/domain/article';
     }]
 })
 export class LoansComponent implements OnInit{
+
+    DataViewOverlayPanel: any[];
+
+    colsDynamic: any[];
 
     loanDialog: boolean = false;
 
@@ -42,24 +47,46 @@ export class LoansComponent implements OnInit{
     constructor(private loanService: LoanService, private messageService: MessageService, private confirmationService: ConfirmationService) {}
 
     ngOnInit() {
-        this.loanService.getLoans().subscribe(res => {
-            this.loans = res['data'];
+        const apisInit = forkJoin({
+            'persons': this.loanService.getPersons(),
+            'articles': this.loanService.getArticles(),
+            'loans': this.loanService.getLoans()
+        });
+
+        apisInit.subscribe(res => {
+            let persons: User[] = res['persons']['data'];
+            this.users = persons;
+            this.monitors = persons.filter(x => x.rol === 'monitor');
+            this.articles = res['articles']['data'];
+            this.loans = res['loans']['data'].map(x => {
+                return {
+                    id: x['id'],
+                    person: this.users.find(y => y.id === x['personUser']),
+                    monitor: this.monitors.find(y => y.id === x['personMonitor']),
+                    article: this.articles.find(y => y.id === x['article']),
+                    quantityArticle: x['qtyArticle'],
+                    startDate: new Date(x['dateStart']),
+                    endDate: new Date(x['dateEnd']),
+                    returned: x['isReturned'],
+                }
+            });
         }, error => {
-            this.messageService.add({ severity: 'error', summary: 'Unexpected error', detail: 'There was an unexpected error loading loans', life: 3000 });
+            this.messageService.add({ severity: 'error', summary: 'Unexpected error', detail: 'There was an unexpected error loading data', life: 3000 });
         });
 
         this.returnedValues = [
-            { label: 'TRUE', value: true },
-            { label: 'FALSE', value: false },
+            { label: 'true', value: true },
+            { label: 'false', value: false },
         ];
     }
 
     openNew() {
         this.loan = { 
-            startDate: new Date(),
-            endDate: new Date(),
+            startDate: null,
+            endDate: null,
             returned: false
-        };        this.submitted = false;
+        };       
+        this.submitted = false;
         this.loanDialog = true;
     }
 
@@ -97,10 +124,10 @@ export class LoansComponent implements OnInit{
                 this.loanService.deleteLoan(loan.id).subscribe(res => {
                     this.loans = this.loans.filter((val) => val.id !== loan.id);
                     this.loan = { 
-                        startDate: new Date(),
-                        endDate: new Date(),
+                        startDate: null,
+                        endDate: null,
                         returned: false
-                    };
+                    }; 
                     this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Loan Deleted', life: 3000 });
                 }, error => {
                     this.messageService.add({ severity: 'error', summary: 'Error Deleting Loan', detail: 'There was an error trying to delete the loan', life: 3000 });
@@ -116,44 +143,49 @@ export class LoansComponent implements OnInit{
 
     saveLoan() {
         this.submitted = true;
-
-        if (this.loan.article.name.trim()) {
-            if (this.loan.id) {
-                let properties = ['user', 'monitor', 'article', 'quantityArticle', 'startDate', 'endDate', 'returned'];
+        let loanNew = {...this.loan};
+        if (loanNew.article.name.trim()) {
+            if (loanNew.id) {
+                let properties = [
+                    { label: 'user', value: 'personUser' }, 
+                    { label: 'monitor', value: 'personMonitor' }, 
+                    { label: 'article', value: 'article' }, 
+                    { label: 'quantityArticle', value: 'qtyArticle' }, 
+                    { label: 'startDate', value: 'dateStart' }, 
+                    { label: 'endDate', value: 'dateEnd' }, 
+                    { label: 'returned', value: 'isReturned' }];
                 properties.map(x => {
-                    if(this.oldLoan[x] !== this.loan[x]){
+                    if(this.oldLoan[x.label] !== loanNew[x.label]){
                         let patch: Patch = {
                             op: 'update',
-                            key: x,
-                            value: this.loan[x]
+                            key: x.value,
+                            value: loanNew[x.label]
                         }
-                        this.loanService.patchLoan(this.loan.id, patch).subscribe(res => {
-                            debugger;
+                        this.loanService.patchLoan(loanNew.id, patch).subscribe(res => {
                             this.messageService.add({ severity: 'success', summary: 'Loan Updated', detail: `updated ${x} property successfully`, life: 3000 });
                         }, error => {
                             this.messageService.add({ severity: 'error', summary: 'Error Updating Loan', detail: `Error updating ${x} property the loan`, life: 3000 });
                         });
-                        this.loans[this.findIndexById(this.loan.id)] = this.loan;
+                        this.loans[this.findIndexById(loanNew.id)] = loanNew;
                     }
                 });
             } else {
-                this.loanService.postLoan(this.loan).subscribe(res => {
-                    if(res['status'] === 'CREATED'){
-                        this.loans.push(res['data']);
-                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Loan Created', life: 3000 });
-                    }
+                this.loanService.postLoan(loanNew).subscribe(res => {
+                    this.loans.push(loanNew);
+                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Loan Created', life: 3000 });
                 }, error => {
                     this.messageService.add({ severity: 'error', summary: 'Error Creating Loan', detail: 'Error creating the loan', life: 3000 });
                 });
             }
-
+            
             this.loans = [...this.loans];
             this.loanDialog = false;
             this.loan = { 
-                startDate: new Date(),
-                endDate: new Date(),
+                startDate: null,
+                endDate: null,
                 returned: false
-            };        }
+            };        
+        }
     }
 
     findIndexById(id: string): number {
@@ -177,5 +209,16 @@ export class LoansComponent implements OnInit{
             default:
               return "error";
         }
+    }
+
+    setDataViewOverlayPanel(info: any){
+        this.colsDynamic = Object.entries(info).map(x => {
+            return {
+                field: x[0],
+                header: x[0]
+            }
+        });
+        this.DataViewOverlayPanel = [];
+        this.DataViewOverlayPanel.push(info);
     }
 }

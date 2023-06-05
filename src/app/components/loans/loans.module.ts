@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LoansComponent } from './loans.component';
 import { PrimengModule } from 'src/app/primeng.module';
 import { RouterModule, Routes } from '@angular/router';
+import { TableComponent } from './table/table.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [LoansComponent],
+  declarations: [LoansComponent, TableComponent],
   imports: [
     CommonModule,
     PrimengModule,
