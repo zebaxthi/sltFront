@@ -130,7 +130,7 @@ export class InventoryComponent implements OnInit{
                     this.messageService.add({ severity: 'error', summary: 'Error Creating Article', detail: 'Error creating the article', life: 3000 });
                 });
             }
-
+            
             this.articles = [...this.articles];
             this.articleDialog = false;
             this.article = {};

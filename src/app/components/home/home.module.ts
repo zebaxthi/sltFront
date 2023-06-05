@@ -7,6 +7,7 @@ import { NavbarComponent } from 'src/app/shared/navbar/navbar.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { PrimengModule } from 'src/app/primeng.module';
 import { InventoryModule } from '../inventory/inventory.module';
+import { LoansModule } from '../loans/loans.module';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { InventoryModule } from '../inventory/inventory.module';
     CommonModule,
     HomeRoutingModule,
     PrimengModule,
-    InventoryModule
+    InventoryModule,
+    LoansModule
   ],
   exports: [HomeComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

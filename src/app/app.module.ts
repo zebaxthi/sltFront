@@ -14,12 +14,12 @@ import { ArticleService } from './components/inventory/service/article.service';
 import { PrimengModule } from './primeng.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './helpers/jwt.interceptor';
+import { LoanService } from './components/loans/service/loan.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    LoansComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,6 +33,7 @@ import { JwtInterceptor } from './helpers/jwt.interceptor';
   ],
   providers: [
     ArticleService,
+    LoanService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
