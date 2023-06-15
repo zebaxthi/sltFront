@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from './service/auth.service';
 import { CredentialsUser } from 'src/app/domain/credentialsUser';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', Validators.required)
   });
 
-  constructor(public auth: AuthService, private router: Router) { }
+  constructor(public auth: AuthService, private router: Router, private messageService: MessageService) { }
 
   ngOnInit() {
   }
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
       this.auth.saveToken(res['data']['token']);
       this.router.navigate(['home']);
     }, error => {
-      console.log(error);
+      this.messageService.add({ severity: 'error', summary: 'Incorrect credentials.', detail: 'Email or password are wrong.', life: 3000 });
       this.loading = false;
     }, () => {
       this.loading = false;
